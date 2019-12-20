@@ -2,3 +2,21 @@
 [1220/040353.998:ERROR:exception_snapshot_win.cc(98)] thread ID 7948 not found in process
 [1220/040542.506:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
 [1220/040542.509:ERROR:exception_snapshot_win.cc(98)] thread ID 16692 not found in process
+[1220/112605.952:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/112605.954:ERROR:exception_snapshot_win.cc(98)] thread ID 21380 not found in process
+[1220/115108.571:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/115108.571:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/115108.574:ERROR:exception_snapshot_win.cc(98)] thread ID 1640 not found in process
+[1220/115108.574:ERROR:exception_snapshot_win.cc(98)] thread ID 21048 not found in process
+[1220/115526.211:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/115526.211:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/115526.233:ERROR:exception_snapshot_win.cc(98)] thread ID 7172 not found in process
+[1220/115526.233:ERROR:exception_snapshot_win.cc(98)] thread ID 13860 not found in process
+[1220/120051.161:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/120051.162:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/120051.358:ERROR:exception_snapshot_win.cc(98)] thread ID 10540 not found in process
+[1220/120051.358:ERROR:exception_snapshot_win.cc(98)] thread ID 11472 not found in process
+[1220/120745.684:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/120745.699:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[1220/120745.728:ERROR:exception_snapshot_win.cc(98)] thread ID 12964 not found in process
+[1220/120745.728:ERROR:exception_snapshot_win.cc(98)] thread ID 18444 not found in process

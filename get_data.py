@@ -2,6 +2,9 @@ from selenium import webdriver
 import pandas as pd
 import bs4
 from time import sleep
+import os
+
+path = os.getcwd() + "/data"
 
 
 def get_text(stock_code) : 
@@ -22,50 +25,65 @@ def get_text(stock_code) :
 
     search_btn = driver.find_element_by_xpath("//*[@id='ctl00_ContentPlaceHolder1_submitBut']")
     search_btn.click()
+    driver.minimize_window()
 
     col_name = []
-    '''
-    date = []
-    start_price = []
-    max_price = []
-    min_price = []
-    end_price = []
-    grow = []
-    grow_percent = []
-    quantity = []
-    turnover = []
-    PE_ratio = []
-    '''
+
 
     data = []
 
+    
     for i in range(1 , 11) : 
         name = driver.find_element_by_xpath("//*[@id='main3']/div[5]/div[3]/table/tbody/tr[1]/th[" + str(i) + "]")
         col_name.append(name.text)
     else : 
         data.append(col_name)
+    
+
+
+
 
     ct = 0
+    table_element = driver.find_element_by_xpath("//*[@id='main3']/div[5]/div[3]/table/tbody")
+     
+    temp = []
+    ct = 1
+    for i in table_element.text.split("\n") : 
+        for j in i.split(" ") :         
+            if ct > 10 : 
+                ct = 1
+                data.append(temp)
+                print(temp)
+                temp = []
 
+            temp.append(j)
+            ct += 1
+    else : 
+        df = pd.DataFrame(data[2 : ] , columns = col_name)
+        df.to_csv(path + "/" + str(stock_code) + ".csv" , encoding = 'big5' , index = False)
+        print(df)
+        driver.close()
+
+
+    '''
     for i in range(2 , 2710) : 
         temp = []
-        '''
-        if ct == 20 : 
-            sleep(1)
-            ct = 0
-        '''
-
         for j in range(1 , 10) : 
             element = driver.find_element_by_xpath("//*[@id='main3']/div[5]/div[3]/table/tbody/tr[" + str(i) + "]/td[" + str(j) + "]")
             temp.append(element.text)
         else : 
             data.append(temp)
+            print(temp)
             #ct += 1
     else : 
         df = pd.DataFrame(data)
         print(df)
-
-
+        
+        pd.write_csv(path + "/" + str(stock_code) + ".csv")
+    '''
 
 
 get_text(2207)
+get_text(2454)
+
+
