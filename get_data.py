@@ -68,7 +68,7 @@ def get_stock_info(options , stock_code) :
 		print("Fail to get stock info，stock_code : {}".format(stock_code))
 
 
-#因為值一值爆開，所以選擇設其史的第一天為50然後直接正向計算，code在preprocessing.py
+#因為值一直爆開，所以選擇設第一天為50然後直接正向計算，code在preprocessing.py
 def get_KD_value(stock_code , df) : 
 	base_url = "https://www.cnyes.com/twstock/Technical/"
 	url = base_url + str(stock_code) + ".htm"
@@ -128,7 +128,6 @@ def get_KD_value(stock_code , df) :
 	df['D'] = D_lst
 	df['RSV'] = RSV_lst
 
-
 	print(df.columns.to_list())
 	print(df.iloc[0 : 30 , :])       
 	
@@ -142,7 +141,10 @@ def get_PB_value(options , stock_code) :
 	'''
 	driver.get("https://www.twse.com.tw/zh/page/trading/exchange/BWIBBU.html")
 	
-	for i in range(11) : 
+	df_lst = []
+	stock_code_input = driver.find_element_by_xpath("//*[@id='main-form']/div/div/form/input")
+	stock_code_input.send_keys(str(stock_code))
+	for i in range(1 , 12) : 
 		element = driver.find_element_by_xpath("//*[@id='d1']/select[1]")
 		year_selector = Select(element)
 		year_selector.select_by_index(i)
@@ -151,22 +153,28 @@ def get_PB_value(options , stock_code) :
 			month_selector = Select(element)
 			month_selector.select_by_index(j)
 
-			stock_code_input = driver.find_element_by_xpath("//*[@id='main-form']/div/div/form/input")
-			stock_code_input.send_keys(str(stock_code))
+			
 
 			search_btn = driver.find_element_by_xpath("//*[@id='main-form']/div/div/form/a")
 			search_btn.click()
 
-			#ck = driver.find_element_by_xpath('//*[@id="reports"]/div[1]/a[2]')
-			#ck.click()
+			html_btn = 
 
-			downloader = driver.find_element_by_xpath("//*[@id='reports']/div[1]/a[2]")
-			download_url = downloader.get_attribute("href")
-			driver.get(download_url)
-
+			driver.delete_all_cookies()
+			driver.implicitly_wait(1)
 			driver.get("https://www.twse.com.tw/zh/page/trading/exchange/BWIBBU.html")
-			sleep(1)
+			
+			
+	for i in range(len(df_lst)) : 
+		df_lst[i] = df_lst[i][0]
+		col_temp = []
+		for j , k in df_lst[i].columns.to_list() : 
+			col_temp.append(k)
+		df_lst[i].columns = col_temp
 	'''
+
+
+	
 	base_url = "https://www.twse.com.tw/exchangeReport/BWIBBU?response=html&date="
 	year_lst = range(2009 , 2020)
 	month_lst = ["01" , "02" , "03" , "04" , "05" , "06" , "07" , "08" , "09" , "10" , "11" , "12"]
@@ -175,16 +183,39 @@ def get_PB_value(options , stock_code) :
 	for i in year_lst : 
 		for j in month_lst : 
 			url_lst.append(base_url + str(i) + j + "01&stockNo=" + str(stock_code))
-	a = []
+	
+	df_lst = []
 	for i in url_lst : 
-		#driver.get(i)
-		df = pd.read_html(i)
-		sleep(1)
-		a.append(i)
+		driver.get(i)
+		df = pd.read_html(driver.page_source)
+		driver.delete_all_cookies()
+		sleep(3)
+		df_lst.append(df)
 
-	for i in a : 
+	for i in range(len(df_lst)) : 
+		df_lst[i] = df_lst[i][0]
+		col_temp = []
+		for j , k in df_lst[i].columns.to_list() : 
+			col_temp.append(k)
+		df_lst[i].columns = col_temp
+
+	for i in df_lst[:3] : 
 		print(i)
+	
+	
 
+	'''
+	url = "https://www.twse.com.tw/exchangeReport/BWIBBU?response=html&date=20090101&stockNo=2207"
+	driver.get(url)
+	b = pd.read_html(driver.page_source)
+	b = b[0]
+	temp = []
+	for i , j in b.columns.to_list() : 
+		temp.append(j)
+
+	b.columns = temp
+	print(b)
+	'''
 
 get_PB_value(driver_settings(2207) , 2207)
 
