@@ -35,6 +35,28 @@ def concat_inlist_df(df_lst) :
 	
 	return df
 
+def concat_info_pb(info_df , pb_df) : 
+	pb_cols = pb_df.columns.to_list()
+
+	for i in pb_cols : 
+		info_df[i] = list(reversed(pb_df[i].to_list()))	
+
+	return info_df	
+
 def RSI_value(stock_code) : 
 	df = pd.read_csv(path + "/data/" + str(stock_code) + "/" + str(stock_code) + ".csv" , encoding = "big5")
 	
+def match_info_and_PB_value_idx(info_df , pb_df) : 
+	if info_df.shape[0] == pb_df.shape[0] : 
+		print("info_df and pb_df have same rows")
+		return info_df , pb_df
+
+	else : 
+		pb_df.drop(0 , axis = 0 , inplace = True)
+		return info_df , pb_df
+
+def drop_redundant_col(*kwargs) : 
+	for i in range(len(kwargs[0])) : 
+		kwargs[0][i].drop(kwargs[1][i] , axis = 1 , inplace = True)
+
+	return kwargs[0]

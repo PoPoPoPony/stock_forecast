@@ -25,9 +25,14 @@ def get_stock_info(options , stock_code) :
 
 	res = driver.get(url)
 	driver.maximize_window()
+	
+	#設定開始日期為2009/01/01
 	start_date = driver.find_element_by_xpath("//*[@id='ctl00_ContentPlaceHolder1_startText']")
-	print(start_date.get_attribute("value"))
 	driver.execute_script("arguments[0].value = '2009/01/01';", start_date)
+
+	#設定結束日期為2019/12/31
+	end_date = driver.find_element_by_xpath("//*[@id='ctl00_ContentPlaceHolder1_endText']")
+	driver.execute_script("arguments[0].value = '2019/12/31';", end_date)
 
 	search_btn = driver.find_element_by_xpath("//*[@id='ctl00_ContentPlaceHolder1_submitBut']")
 	search_btn.click()
