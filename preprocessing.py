@@ -1,4 +1,4 @@
-import get_data
+import web_clawer
 import pandas as pd
 import os
 
@@ -8,10 +8,9 @@ path = os.getcwd()
 #df_2454 = get_data.get_stock_info(get_data.driver_settings() , 2454)
 #df = pd.read_csv(path + "/data/2207.csv" , encoding = 'big5')
 
-get_data.get_PB_value(get_data.driver_settings(2207) , 2207)
 
 def KD_value(stock_code) : 
-	df = pd.read_csv(path + "/data/" + str(stock_code) + "/" + str(stock_code) + ".csv" , encoding = "big5")
+	df = pd.read_csv(path + "/data/" + str(stock_code) + "/" + str(stock_code) + "_info.csv" , encoding = "big5")
 	print(df)
 
 	K_lst = [50]
@@ -29,5 +28,13 @@ def KD_value(stock_code) :
 	df["D_value"] = list(reversed(D_lst))
 	print(df)
 
-print()
+def concat_inlist_df(df_lst) : 
+	df = pd.concat([df_lst[0] , df_lst[1]] , axis = 0 , ignore_index = True)
+	for i in range(2 , len(df_lst)) : 
+		df = pd.concat([df , df_lst[i]] , axis = 0 , ignore_index = True)
+	
+	return df
 
+def RSI_value(stock_code) : 
+	df = pd.read_csv(path + "/data/" + str(stock_code) + "/" + str(stock_code) + ".csv" , encoding = "big5")
+	
