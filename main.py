@@ -20,3 +20,7 @@ info_df , pb_df = preprocessing.match_info_and_PB_value_idx(info_df , pb_df)
 
 info_pb_df = preprocessing.concat_info_pb(info_df , pb_df)
 
+print(info_pb_df.shape)
+
+preprocessing.KD_value(info_pb_df)
+preprocessing.RSI_value(info_pb_df)
