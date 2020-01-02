@@ -65,7 +65,6 @@ def get_stock_info(options , stock_code) :
 			df = pd.DataFrame(data[2 : ] , columns = col_name)
 			output.write_csv(df , stock_code , "2207_info")
 			driver.close()
-			return df
 			
 	except Exception as e: 
 		print(e)
@@ -165,3 +164,33 @@ def get_PB_value(options , stock_code) :
 		df_lst[i].columns = col_temp
 
 	return df_lst
+	
+def get_tw_market_value(options) : 
+	driver = webdriver.Chrome(options = options)
+	
+	base_url = "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?response=html&date="
+	year_lst = range(2009 , 2020)
+	month_lst = ["01" , "02" , "03" , "04" , "05" , "06" , "07" , "08" , "09" , "10" , "11" , "12"]
+	url_lst = []
+
+	for i in year_lst : 
+		for j in month_lst : 
+			url_lst.append(base_url + str(i) + j + "01")
+	
+	df_lst = []
+	for i in url_lst : 
+		driver.get(i)
+		df = pd.read_html(driver.page_source)
+		driver.delete_all_cookies()
+		sleep(3)
+		df_lst.append(df)
+
+	for i in range(len(df_lst)) : 
+		df_lst[i] = df_lst[i][0]
+		col_temp = []
+		for j , k in df_lst[i].columns.to_list() : 
+			col_temp.append(k)
+		df_lst[i].columns = col_temp
+
+	return df_lst
+
