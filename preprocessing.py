@@ -1,4 +1,4 @@
-import web_clawer
+import web_crawler
 import pandas as pd
 import os
 import output
@@ -33,11 +33,11 @@ def concat_inlist_df(df_lst) :
 	
 	return df
 
-def concat_info_pb(info_df , pb_df) : 
-	pb_cols = pb_df.columns.to_list()
+def concat_info_and_reversed_df(info_df , reversed_df) : 
+	reversed_cols = reversed_df.columns.to_list()
 
-	for i in pb_cols : 
-		info_df[i] = list(reversed(pb_df[i].to_list()))	
+	for i in reversed_cols : 
+		info_df[i] = list(reversed(reversed_df[i].to_list()))	
 
 	return info_df	
 
@@ -144,7 +144,20 @@ def RSI_value(df) :
 	
 	output.write_csv(RSI_df , 2207 , "2207_RSI_value")
 
+def metal_price_procedure(mp_df) : 
+	mp_df.drop(["2" , "4" , "6" , "8"] , axis = 1 , inplace = True)
+	mp_df.columns = ["日期" , "黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價"]
 
+	mp_df = mp_df.loc[~(mp_df['日期'].str.contains("星期六")) , :]
+
+	mp_df.reset_index(inplace = True)
+	mp_df.drop("index" , axis = 1 , inplace = True)
+	mp_df["日期"] = [x.split("(")[0] for x in mp_df["日期"]]
 	
+	mp_cols = mp_df.columns.to_list()
 
+	for i in mp_cols : 
+		mp_df[i] = list(reversed(mp_df[i].to_list()))	
+
+	return mp_df
 

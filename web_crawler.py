@@ -23,7 +23,7 @@ def get_stock_info(options , stock_code) :
 	
 	driver = webdriver.Chrome(chrome_options = options)
 
-	res = driver.get(url)
+	driver.get(url)
 	driver.maximize_window()
 	
 	#設定開始日期為2009/01/01
@@ -85,7 +85,7 @@ def get_KD_value(stock_code , df) :
 	
 	driver = webdriver.Chrome(chrome_options = options)
 
-	res = driver.get(url)
+	driver.get(url)
 
 	K_lst = []
 	D_lst = []
@@ -194,3 +194,38 @@ def get_tw_market_value(options) :
 
 	return df_lst
 
+def get_gold_price() : 
+	options = webdriver.ChromeOptions()
+	options.add_argument("user-agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'")
+	
+	driver = webdriver.Chrome(options = options)
+	driver.get("https://www.ghx.com.tw/GoldHistory.aspx")
+	driver.maximize_window()
+
+	data_count = driver.find_element_by_xpath("//*[@id='txt_pagesize']")
+	driver.execute_script("arguments[0].value = '999';", data_count)
+
+	start_date = driver.find_element_by_xpath("//*[@id='txt_sdate']")
+	start_date.send_keys("2009/01/01")
+
+	start_date = driver.find_element_by_xpath("//*[@id='txt_edate']")
+	start_date.send_keys("2019/12/31")
+
+	search_btn = driver.find_element_by_xpath("//*[@id='btn_query_period']")
+	search_btn.click()
+
+	df_lst = []
+	df_lst.append(pd.read_html(driver.page_source)[-2])
+
+	for i in range(3) : 
+		next_page_btn = driver.find_element_by_xpath("//*[@id='btn_nextpage']")
+		next_page_btn.click()
+		driver.implicitly_wait(5)
+		df_lst.append(pd.read_html(driver.page_source)[-2])
+
+	for i in range(len(df_lst)) : 
+		df_lst[i].drop([df_lst[i].shape[0] - 1 , df_lst[i].shape[0] - 2] , axis = 0 , inplace = True)
+		
+	driver.quit()
+	
+	return df_lst
