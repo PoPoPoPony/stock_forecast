@@ -148,7 +148,8 @@ def metal_price_procedure(mp_df) :
 	mp_df.drop(["2" , "4" , "6" , "8"] , axis = 1 , inplace = True)
 	mp_df.columns = ["日期" , "黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價"]
 
-	mp_df = mp_df.loc[~(mp_df['日期'].str.contains("星期六")) , :]
+	#後來發現以前的股市好像是只有禮拜天休息==
+	#mp_df = mp_df.loc[~(mp_df['日期'].str.contains("星期六")) , :]
 
 	mp_df.reset_index(inplace = True)
 	mp_df.drop("index" , axis = 1 , inplace = True)
@@ -161,3 +162,19 @@ def metal_price_procedure(mp_df) :
 
 	return mp_df
 
+def NASDAQ_procedure(df) : 
+	df.columns = ["日期" , "NASDAQ開盤價" , "NASDAQ收盤價"]
+	
+	date = df["日期"].to_list()
+
+	for i in range(len(date)) : 
+		(Y , M , D) = date[i].split("/")
+		if len(M) == 1 : 
+			M = "0" + M
+		if len(D) == 1 : 
+			D = "0" + D
+		date[i] = Y + "/" + M + "/" + D
+
+	df["日期"] = date
+	
+	return df
