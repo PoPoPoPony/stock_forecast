@@ -9,7 +9,7 @@ path = os.getcwd()
 #df_2454 = get_data.get_stock_info(get_data.driver_settings() , 2454)
 #df = pd.read_csv(path + "/data/2207.csv" , encoding = 'big5')
 
-#計算KD值，輸入df，並將KD兩個欄位輸出成csv，會比原本的df少7個row
+#計算KD值，輸入df，並將KD兩個欄位輸出成csv，會比原本的df少7個row，順序是2019 -> 2009
 def KD_value(df) : 
 	
 	print(df)
@@ -41,6 +41,27 @@ def concat_info_and_reversed_df(info_df , reversed_df) :
 
 	return info_df	
 
+def concat_technical_index(df , technical_df_lst) : 
+	min_len = df.shape[0]
+	for i in technical_df_lst : 
+		if i.shape[0] < min_len : 
+			min_len = i.shape[0]
+
+	df = df[ : min_len]
+	df_cols = df.columns.to_list()
+
+	for i in range(len(technical_df_lst)) : 
+		technical_df_lst[i] = technical_df_lst[i][ : min_len]
+		for j in technical_df_lst[i].columns : 
+			df_cols.append(j)
+
+	for i in technical_df_lst : 
+		df = pd.concat([df , i] , axis = 1 , ignore_index = True)
+
+	df.columns = df_cols
+
+	return df
+
 def match_info_and_PB_value_idx(info_df , pb_df) : 
 	if info_df.shape[0] == pb_df.shape[0] : 
 		print("info_df and pb_df have same rows")
@@ -56,7 +77,7 @@ def drop_redundant_col(*kwargs) :
 
 	return kwargs[0]
 
-#計算3日RSI、5日RSI、7日RSI、10日RSI
+#計算3日RSI、5日RSI、7日RSI、10日RSI，順序應該是2019 -> 2009
 def RSI_value(df) : 
 	catch_range_lst = [3 , 5 , 7 , 10]
 	fluctuation_lst = df["漲跌"].to_list()
@@ -178,3 +199,81 @@ def NASDAQ_procedure(df) :
 	df["日期"] = date
 	
 	return df
+
+def MACD_value(df) : 
+	#構建出的list都是由2009年進展到2019年
+	DI_lst = []
+	EMA12_lst = []
+	EMA26_lst = []
+
+	for i in reversed(range(df.shape[0])) : 
+		DI_lst.append((df.iloc[i , 2] + df.iloc[i , 3] + 2 * df.iloc[i , 4]) / 4)
+	
+	for i in range(11 , len(DI_lst)) :
+		EMA12_lst.append(sum(DI_lst[i - 11 : i + 1]) / 12)
+		
+	for i in range(25 , len(DI_lst)) : 
+		EMA26_lst.append(sum(DI_lst[i - 25 : i + 1]) / 26)
+
+	#EMA平滑化
+	for i in range(1 , len(EMA12_lst)) : 
+		EMA12_lst[i] = EMA12_lst[i - 1] * 11 / 13 + DI_lst[11 : ][i] * 2 / 13
+
+	for i in range(1 , len(EMA26_lst)) : 
+		EMA26_lst[i] = EMA26_lst[i - 1] * 25 / 27 + DI_lst[25 : ][i] * 2 / 27
+
+	#丟棄第一天
+	EMA12_lst.pop(0)
+	EMA26_lst.pop(0)	
+
+	EMA12_lst = EMA12_lst[len(EMA12_lst) - len(EMA26_lst) : ]
+
+	DIF_lst = []
+	for i in range(len(EMA12_lst)) : 
+		DIF_lst.append(EMA12_lst[i] - EMA26_lst[i])
+
+	first_MACD = sum(DIF_lst[:9]) / 9
+	MACD_lst = [first_MACD]
+
+	for i in range(len(DIF_lst[10:])) : 
+		MACD_lst.append(MACD_lst[i - 1] * 4 / 5 + DIF_lst[i] / 5)
+
+	#丟棄前9天，使其與MACD_lst的長度保持一致
+	DIF_lst = DIF_lst[9:]
+
+	df = pd.DataFrame(dict(zip(["DIF" , "MACD"] , [list(reversed(DIF_lst)) , list(reversed(MACD_lst))])))
+
+	MACD_buy = []
+	MACD_sell = []
+
+	for i in range(1 , df.shape[0]) : 
+		if df.iloc[i - 1 , 0] < df.iloc[i - 1 , 1] : 
+			if df.iloc[i , 0] > df.iloc[i , 1] : 
+				MACD_buy.append(1)
+			else : 
+				MACD_buy.append(0)
+		else : 
+			MACD_buy.append(0)
+		
+		if df.iloc[i - 1 , 0] > df.iloc[i - 1 , 1] : 
+			if df.iloc[i , 0] < df.iloc[i , 1] : 
+				MACD_sell.append(1)
+			else : 
+				MACD_sell.append(0)
+		else : 
+			MACD_sell.append(0)
+
+	df.drop(0 , axis = 0 , inplace = True)
+	df["MACD_buy"] = MACD_buy
+	df["MACD_sell"] = MACD_sell
+
+	output.write_csv(df , 2207 , "2207_MACD_value")
+
+def compute_corr(df) : 
+	print(df.corr())
+	cor_df = df.corr()
+
+	#x = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[:col_count][1 : ]
+
+	x = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[1 : ]
+	print(x)

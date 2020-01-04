@@ -6,22 +6,23 @@ import pandas as pd
 
 path = os.getcwd()
 
-#web_crawler.get_stock_info(web_crawler.driver_settings() , 2207)
+'''
+web_crawler.get_stock_info(web_crawler.driver_settings() , 2207)
 
-#df = preprocessing.concat_inlist_df(web_crawler.get_PB_value(web_crawler.driver_settings() , 2207))
-#output.write_csv(df , 2207 , "2207_PB_value")
+df = preprocessing.concat_inlist_df(web_crawler.get_PB_value(web_crawler.driver_settings() , 2207))
+output.write_csv(df , 2207 , "2207_PB_value")
 
-#df = preprocessing.concat_inlist_df(web_crawler.get_tw_market_value(web_crawler.driver_settings()))
-#output.write_csv(df , "market value" , "tw_market_value")
+df = preprocessing.concat_inlist_df(web_crawler.get_tw_market_value(web_crawler.driver_settings()))
+output.write_csv(df , "market value" , "tw_market_value")
 
-#df = preprocessing.concat_inlist_df(web_crawler.get_tw_market_value(web_crawler.driver_settings()))
-#output.write_csv(df , "market value" , "tw_market_value")
+df = preprocessing.concat_inlist_df(web_crawler.get_tw_market_value(web_crawler.driver_settings()))
+output.write_csv(df , "market value" , "tw_market_value")
 
-#df = preprocessing.concat_inlist_df(web_crawler.get_gold_price())
-#output.write_csv(df , "metal price" , "metal_price")
+df = preprocessing.concat_inlist_df(web_crawler.get_gold_price())
+output.write_csv(df , "metal price" , "metal_price")
+'''
 
-
-
+'''
 info_df = pd.read_csv(path + "/data/2207/2207_info.csv" , encoding = "big5")
 pb_df = pd.read_csv(path + "/data/2207/2207_PB_value.csv" , encoding = "big5")
 mv_df = pd.read_csv(path + "/data/market value/tw_market_value.csv" , encoding = "big5")
@@ -40,19 +41,25 @@ mp_df = preprocessing.metal_price_procedure(mp_df)
 
 info_df = pd.merge(info_df , mp_df , how = "left")
 
-print(info_df)
-print(NASDAQ_df)
-
 NASDAQ_df = preprocessing.NASDAQ_procedure(NASDAQ_df)
 info_df = pd.merge(info_df , NASDAQ_df , how = "left")
 
-print(info_df)
+preprocessing.KD_value(info_df)
+preprocessing.RSI_value(info_df)
+preprocessing.MACD_value(info_df)
 
-#preprocessing.KD_value(info_pb_df)
-#preprocessing.RSI_value(info_pb_df)
+KD_df = pd.read_csv(path + "/data/2207/2207_KD_value.csv" , encoding = "big5")
+RSI_df = pd.read_csv(path + "/data/2207/2207_RSI_value.csv" , encoding = "big5")
+MACD_df = pd.read_csv(path + "/data/2207/2207_MACD_value.csv" , encoding = "big5")
 
+df = preprocessing.concat_technical_index(info_df , [KD_df , RSI_df , MACD_df])
+'''
 
+#output.write_csv(df , 2207 , "2207_full_data")
 
+df = pd.read_csv(path + "/data/2207/2207_full_data.csv" , encoding = "big5")
+
+preprocessing.compute_corr(df)
 
 
 
