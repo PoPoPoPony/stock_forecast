@@ -58,8 +58,10 @@ df = preprocessing.concat_technical_index(info_df , [KD_df , RSI_df , MACD_df])
 #output.write_csv(df , 2207 , "2207_full_data")
 
 df = pd.read_csv(path + "/data/2207/2207_full_data.csv" , encoding = "big5")
+df.drop(["日期" , "漲%"] , axis = 1 , inplace = True)
+df = preprocessing.convert_string_col(df)
 
-preprocessing.compute_corr(df)
-
+#preprocessing.compute_corr(df)
+df = preprocessing.fill_na_by_mean(df)
 
 

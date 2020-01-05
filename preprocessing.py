@@ -2,6 +2,8 @@ import web_crawler
 import pandas as pd
 import os
 import output
+from sklearn.preprocessing.imputation import Imputer
+import numpy as np
 
 path = os.getcwd()
 
@@ -269,11 +271,39 @@ def MACD_value(df) :
 
 	output.write_csv(df , 2207 , "2207_MACD_value")
 
+#因為有兩個column是string，且他中間有"，"，無法直接convert，故寫成一個function
+def convert_string_col(df) : 
+	temp = []
+	temp2 = []
+	for i in range(len(df["成交量"].to_list())) : 
+		s = df.iloc[i , 5].replace("," , "")
+		temp.append(float(s))
+		s = df.iloc[i , 6].replace("," , "")
+		temp2.append(float(s))
+	
+	df["成交量"] = temp
+	df["成交金額"] = temp2
+
+	return df
+
+#股市的變數相關係數都滿小的，所以目前先全部變數都取
 def compute_corr(df) : 
-	print(df.corr())
 	cor_df = df.corr()
+	print(cor_df)
+	print(cor_df.iloc[: , 4])
 
 	#x = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[:col_count][1 : ]
 
 	x = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[1 : ]
 	print(x)
+
+def fill_na_by_mean(df) : 
+	df_lst = []
+	imp = Imputer(missing_values = np.nan , strategy = "mean" , copy = True)
+	df[["黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價" , "NASDAQ開盤價" , "NASDAQ收盤價"]] = imp.fit_transform(df[["黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價" , "NASDAQ開盤價" , "NASDAQ收盤價"]])
+
+	return df
+
+def fill_na_by_regression(df) : 
+	pass
+
