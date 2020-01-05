@@ -4,6 +4,7 @@ import os
 import output
 from sklearn.preprocessing.imputation import Imputer
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 path = os.getcwd()
 
@@ -297,13 +298,29 @@ def compute_corr(df) :
 	x = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[1 : ]
 	print(x)
 
+#會遇到連續兩個空值
 def fill_na_by_mean(df) : 
 	df_lst = []
 	imp = Imputer(missing_values = np.nan , strategy = "mean" , copy = True)
-	df[["黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價" , "NASDAQ開盤價" , "NASDAQ收盤價"]] = imp.fit_transform(df[["黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價" , "NASDAQ開盤價" , "NASDAQ收盤價"]])
+	#df[["黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價" , "NASDAQ開盤價" , "NASDAQ收盤價"]] = imp.fit_transform(df[["黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價" , "NASDAQ開盤價" , "NASDAQ收盤價"]])
+
+	loss_matrix = np.where(np.isnan(df))
+	for i in range(len(loss_matrix[0])) : 
+		if np.isnan(df.iloc[loss_matrix[0][i] - 1 , loss_matrix[1][i]]) : 
+			df.iloc[loss_matrix[0][i] , loss_matrix[1][i]] = (df.iloc[loss_matrix[0][i] - 2 , loss_matrix[1][i]] + df.iloc[loss_matrix[0][i] + 1 , loss_matrix[1][i]]) / 2
+		elif np.isnan(df.iloc[loss_matrix[0][i] + 1 , loss_matrix[1][i]]) : 
+			df.iloc[loss_matrix[0][i] , loss_matrix[1][i]] = (df.iloc[loss_matrix[0][i] - 1 , loss_matrix[1][i]] + df.iloc[loss_matrix[0][i] + 2 , loss_matrix[1][i]]) / 2
+		else : 
+			df.iloc[loss_matrix[0][i] , loss_matrix[1][i]] = (df.iloc[loss_matrix[0][i] - 1 , loss_matrix[1][i]] + df.iloc[loss_matrix[0][i] + 1 , loss_matrix[1][i]]) / 2
+
+	print(np.where(np.isnan(df)))
 
 	return df
 
 def fill_na_by_regression(df) : 
-	pass
+	col_lst = ["黃金賣出牌價" , "黃金買進牌價" , "白金賣出牌價" , "白金買進牌價" , "NASDAQ開盤價" , "NASDAQ收盤價"]
+	
+	for i in col_lst : 
+		imp = LinearRegression()
+
 
