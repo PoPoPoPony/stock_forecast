@@ -62,6 +62,7 @@ df.drop(["日期" , "漲%"] , axis = 1 , inplace = True)
 preprocessing.convert_string_col(df)
 
 #preprocessing.compute_corr(df)
-preprocessing.fill_na_by_mean(df)
+#preprocessing.fill_na_by_mean(df)
+#preprocessing.fill_na_by_regression(df)
 
 
