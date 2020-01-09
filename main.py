@@ -60,9 +60,12 @@ df = preprocessing.concat_technical_index(info_df , [KD_df , RSI_df , MACD_df])
 df = pd.read_csv(path + "/data/2207/2207_full_data.csv" , encoding = "big5")
 df.drop(["日期" , "漲%"] , axis = 1 , inplace = True)
 preprocessing.convert_string_col(df)
-
+Y_df = df[["漲跌"]]
+print(Y_df)
 #preprocessing.compute_corr(df)
-#preprocessing.fill_na_by_mean(df)
-#preprocessing.fill_na_by_regression(df)
+df = preprocessing.drop_low_corr(df , 20)
+scaled_df = preprocessing.standardizer(df)
+#mean_df = preprocessing.fill_na_by_mean(df)
+#reg_df = preprocessing.fill_na_by_regression(df)
 
 

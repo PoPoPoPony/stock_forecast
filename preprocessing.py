@@ -5,6 +5,10 @@ import output
 from sklearn.preprocessing.imputation import Imputer
 import numpy as np
 from sklearn import tree
+from sklearn.preprocessing import StandardScaler
+
+
+
 path = os.getcwd()
 
 #df_2207 = get_data.get_stock_info(get_data.driver_settings() , 2207)
@@ -289,13 +293,16 @@ def convert_string_col(df) :
 #股市的變數相關係數都滿小的，所以目前先全部變數都取
 def compute_corr(df) : 
 	cor_df = df.corr()
-	print(cor_df)
-	print(cor_df.iloc[: , 4])
+	corr_info = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[1 : ]
+	print(corr_info)
 
-	#x = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[:col_count][1 : ]
+#保留remain_count數量的column(取corr前n高的)
+def drop_low_corr(df , remain_count) : 
+	cor_df = df.corr()
+	remain_col = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[ : remain_count + 1][1 : ]
+	df = df[remain_col]
 
-	x = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[1 : ]
-	print(x)
+	return df
 
 #會遇到連續兩個空值，若上一個也為空值，則取上上個，以此類推
 def fill_na_by_mean(df) : 
@@ -326,5 +333,25 @@ def fill_na_by_regression(df) :
 			df.loc[loss_idx[j] , i] = result[j]
 
 	return df
+
+def standardizer(df) : 
+	status_col = []
+
+	for i in df.columns : 
+		if df[i].nunique() < 10 : 
+			status_col.append(i)
+	
+	print(status_col)
+
+	status_df = df[status_col]
+	df.drop(status_col , axis = 1 , inplace = True)
+
+	mm = StandardScaler()
+	scaled_df = pd.DataFrame(mm.fit_transform(df) , columns = df.columns)
+	scaled_df = pd.concat([scaled_df , status_df] , axis = 1)
+
+	return scaled_df
+
+
 		
 		
