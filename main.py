@@ -62,30 +62,29 @@ df = preprocessing.concat_technical_index(info_df , [KD_df , RSI_df , MACD_df])
 df = pd.read_csv(path + "/data/2207/2207_full_data.csv" , encoding = "big5")
 df.drop(["日期" , "漲%"] , axis = 1 , inplace = True)
 preprocessing.convert_string_col(df)
-df_Y = df[["漲跌"]]
+df_Y = df[["收盤"]]
 
-#preprocessing.compute_corr(df)
 
 
 print(df_Y)
 
-df = preprocessing.fill_na_by_mean(df)
+#df = preprocessing.fill_na_by_mean(df)
 #df = preprocessing.fill_na_by_regression(df)
 
 #會順便把"漲跌"去掉
 #df = preprocessing.drop_low_corr(df , 20)
-df.drop(["漲跌"] , axis = 1 , inplace = True)
+#df.drop(["漲跌"] , axis = 1 , inplace = True)
 
-scaled_df = preprocessing.standardizer(df)
+#scaled_df = preprocessing.standardizer(df)
 
 
 
-score.KFold_cross_validation(scaled_df , df_Y , 5 , 2)
+#score.KFold_cross_validation(scaled_df , df_Y , 5 , 2)
 #score.adjust_hyper_param(scaled_df , df_Y , 2)
 
 
-
+'''
 plt.scatter(range(df_Y.shape[0]) , df_Y.iloc[: , 0])
 plt.show()
-
+'''
 

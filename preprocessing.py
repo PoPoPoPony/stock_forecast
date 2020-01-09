@@ -293,7 +293,7 @@ def convert_string_col(df) :
 #股市的變數相關係數都滿小的，所以目前先全部變數都取
 def compute_corr(df) : 
 	cor_df = df.corr()
-	corr_info = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[1 : ]
+	corr_info = cor_df['收盤'].abs().sort_values(ascending = False).index.to_list()[1 : ]
 	print(corr_info)
 
 	return cor_df
@@ -301,7 +301,7 @@ def compute_corr(df) :
 #保留remain_count數量的column(取corr前n高的)
 def drop_low_corr(df , remain_count) : 
 	cor_df = df.corr()
-	remain_col = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[ : remain_count + 1][1 : ]
+	remain_col = cor_df['收盤'].abs().sort_values(ascending = False).index.to_list()[ : remain_count + 1][1 : ]
 	df = df[remain_col]
 
 	return df
