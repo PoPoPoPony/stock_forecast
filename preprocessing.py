@@ -296,6 +296,9 @@ def compute_corr(df) :
 	corr_info = cor_df['漲跌'].abs().sort_values(ascending = False).index.to_list()[1 : ]
 	print(corr_info)
 
+	return cor_df
+	
+
 #保留remain_count數量的column(取corr前n高的)
 def drop_low_corr(df , remain_count) : 
 	cor_df = df.corr()
@@ -351,6 +354,8 @@ def standardizer(df) :
 	scaled_df = pd.concat([scaled_df , status_df] , axis = 1)
 
 	return scaled_df
+
+
 
 
 		
