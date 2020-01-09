@@ -298,7 +298,6 @@ def compute_corr(df) :
 
 	return cor_df
 	
-
 #保留remain_count數量的column(取corr前n高的)
 def drop_low_corr(df , remain_count) : 
 	cor_df = df.corr()
