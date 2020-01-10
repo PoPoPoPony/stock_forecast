@@ -4,6 +4,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import gradient_boosting
 import pandas as pd
 from sklearn.preprocessing import PolynomialFeatures
+import output
 
 def KFold_cross_validation(df_X , df_Y , n , model_flag) : 
 	kf = KFold(n_splits = n , shuffle = True)
@@ -24,6 +25,9 @@ def KFold_cross_validation(df_X , df_Y , n , model_flag) :
 
 		if model_flag == 3 : 
 			error.append(model.GDBT(train_X , train_Y , test_X , test_Y))
+		
+		if model_flag == 4 : 
+			error.append(model.DNN(train_X , train_Y , test_X , test_Y , activation_function = "softmax"))
 	
 
 
@@ -38,16 +42,12 @@ def KFold_cross_validation(df_X , df_Y , n , model_flag) :
 	train_mean_error = train_mean_error / n
 	test_mean_error = test_mean_error / n
 
-	print("train error = {}".format(train_mean_error))
-	print("test error = {}".format(test_mean_error))
+	print("training error = {}".format(train_mean_error))
+	print("testing error = {}".format(test_mean_error))
 
 def adjust_hyper_param(df_X , df_Y , model_flag) : 
-	if model_flag == 1 : 
-		pass
-	
-	
-	
-	if model_flag == 2 : 
+
+	if model_flag == 3 : 
 		param = [{"learning_rate" : [0.05 , 0.07 , 0.1] , 
 		"n_estimators" : [60 , 70 , 80 , 90 , 100] , 
 		"max_depth" : [3 , 4 , 5] , 
@@ -70,4 +70,4 @@ def adjust_hyper_param(df_X , df_Y , model_flag) :
 		print(grid.best_estimator_)
 
 		res = grid.cv_results_
-		print(pd.DataFrame(res))
+		output.write_csv(pd.DataFrame(res) , 2207 , "2207_GDBT_grid_search")

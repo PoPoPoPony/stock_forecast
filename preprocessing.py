@@ -342,8 +342,6 @@ def standardizer(df) :
 	for i in df.columns : 
 		if df[i].nunique() < 10 : 
 			status_col.append(i)
-	
-	print(status_col)
 
 	status_df = df[status_col]
 	df.drop(status_col , axis = 1 , inplace = True)

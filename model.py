@@ -3,6 +3,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import gradient_boosting
 from sklearn.preprocessing import PolynomialFeatures
+from keras.models import Sequential
+from keras.layers import Dense , Dropout
+from keras import metrics
 
 def linear_reg(train_X , train_Y , test_X , test_Y) : 
 	lr = LinearRegression()
@@ -21,7 +24,7 @@ def linear_reg(train_X , train_Y , test_X , test_Y) :
 	return [train_mse , test_mse]
 
 def poly_reg(train_X , train_Y , test_X , test_Y) : 
-	quadratic_featurizer = PolynomialFeatures(degree = 2)
+	quadratic_featurizer = PolynomialFeatures(degree = 1)
 	poly_train_X = quadratic_featurizer.fit_transform(train_X)
 	poly_test_X = quadratic_featurizer.fit_transform(test_X)
 	lr = LinearRegression()
@@ -38,12 +41,12 @@ def poly_reg(train_X , train_Y , test_X , test_Y) :
 
 def GDBT(train_X , train_Y , test_X , test_Y) : 
 	gdbt = gradient_boosting.GradientBoostingRegressor(loss = "ls" , 
-	learning_rate = 0.05 , 
-	n_estimators = 90 , 
+	learning_rate = 0.1 , 
+	n_estimators = 70 , 
 	criterion = "friedman_mse" , 
-	max_depth = 5 , 
+	max_depth = 4 , 
 	warm_start = True , 
-	subsample = 0.6)
+	subsample = 0.8)
 
 	gdbt.fit(train_X , train_Y)
 

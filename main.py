@@ -5,6 +5,9 @@ import preprocessing
 import os
 import pandas as pd
 from matplotlib import pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from sklearn.preprocessing import PolynomialFeatures
 
 path = os.getcwd()
 
@@ -61,30 +64,56 @@ df = preprocessing.concat_technical_index(info_df , [KD_df , RSI_df , MACD_df])
 
 df = pd.read_csv(path + "/data/2207/2207_full_data.csv" , encoding = "big5")
 df.drop(["日期" , "漲%"] , axis = 1 , inplace = True)
-preprocessing.convert_string_col(df)
+df = preprocessing.convert_string_col(df)
+for i in df.columns : 
+	df[i] = list(reversed(df[i].to_list()))
+
 df_Y = df[["收盤"]]
 
 
 
-print(df_Y)
-
 #df = preprocessing.fill_na_by_mean(df)
-#df = preprocessing.fill_na_by_regression(df)
+df = preprocessing.fill_na_by_regression(df)
+#df = preprocessing.compute_corr(df)
+
+
+
+
+#改成"預測明天"的形式，讓df[0]的日期 = df_Y的日期-1
+df = df.iloc[:df.shape[0] - 1 , :]
+df_Y = df_Y.iloc[1 :  , :] 
+
+
 
 #會順便把"漲跌"去掉
 #df = preprocessing.drop_low_corr(df , 20)
-#df.drop(["漲跌"] , axis = 1 , inplace = True)
+df.drop(["收盤" , "漲跌"] , axis = 1 , inplace = True)
+scaled_df = preprocessing.standardizer(df)
 
-#scaled_df = preprocessing.standardizer(df)
-
-
-
-#score.KFold_cross_validation(scaled_df , df_Y , 5 , 2)
-#score.adjust_hyper_param(scaled_df , df_Y , 2)
-
+print(df)
 
 '''
-plt.scatter(range(df_Y.shape[0]) , df_Y.iloc[: , 0])
+quadratic_featurizer = PolynomialFeatures(degree = 3)
+poly_train_X = quadratic_featurizer.fit_transform(scaled_df[:2000])
+poly_test_X = quadratic_featurizer.fit_transform(scaled_df[2000:])
+lr = LinearRegression()
+lr.fit(poly_train_X , df_Y[:2000])
+
+
+pred_test_Y = lr.predict(poly_test_X)
+'''
+
+
+
+
+score.KFold_cross_validation(scaled_df , df_Y , 5 , 4)
+#score.adjust_hyper_param(scaled_df , df_Y , 3)
+
+'''
+plt.subplot(2 , 1 , 1)
+plt.plot(range(df_Y[2000:].shape[0]) , df_Y.iloc[2000: , 0] , c = "b")
+plt.subplot(2 , 1 , 2)
+plt.plot(range(poly_test_X.shape[0]) , pred_test_Y , c = "r")
 plt.show()
 '''
 
